@@ -7,10 +7,12 @@ import java.util.List;
 public class Board {
     private int dimension;
     private List<List<Cell>> board;
+    private Player player;
 
     public Board(int dimension){
         this.dimension = dimension;
         board = new ArrayList<>();
+
 
         for(int i = 0; i < dimension; i++){
             board.add(new ArrayList<>());
