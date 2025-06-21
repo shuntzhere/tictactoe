@@ -1,3 +1,4 @@
+import controllers.GameController;
 import models.*;
 import strategies.winningstrategy.ColumnWinningStrategy;
 import strategies.winningstrategy.DiagonalWinningStrategy;
@@ -13,6 +14,8 @@ public class Client {
     public static void main(String[] args) {
         System.out.println("GAME STARTS!");
         Scanner scanner = new Scanner(System.in);
+
+        GameController gameController = new GameController();
 
 //        int dimension = scanner.nextInt();
         int dimension = 3;
@@ -32,11 +35,27 @@ public class Client {
                 new DiagonalWinningStrategy()
         );
 
-        Game game = Game.getBuilder().setDimension(dimension)
-                                     .setPlayers(players)
-                                     .setWinningStrategies(winningStrategies)
-                                     .build();
+        Game game = GameController.startGame(
+                dimension,
+                players,
+                winningStrategies
+        );
 
+//        gameController.printBoard(game);
+
+        while(gameController.gameState(game).equals(GameState.IN_PROGRESS)){
+            //show board
+            gameController.printBoard(game);
+            System.out.println("Do you want to undo the last move? (yes/no)");
+            String undoResponse = scanner.nextLine();
+
+            if(undoResponse.equalsIgnoreCase("yes")){
+                gameController.undoLastMove(game);
+            }
+
+            gameController.makeMove(game);
+            //make a move
+        }
         System.out.println("DEBUG");
     }
 }
