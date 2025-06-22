@@ -30,4 +30,9 @@ public class Bot extends Player {
     public void setBotPlayingStrategy(BotPlayingStrategy botPlayingStrategy) {
         this.botPlayingStrategy = botPlayingStrategy;
     }
+
+    @Override
+    Move makeMove(Board board) {
+        return botPlayingStrategy.makeMove(board);
+    }
 }

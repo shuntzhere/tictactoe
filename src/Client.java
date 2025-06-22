@@ -1,4 +1,5 @@
 import controllers.GameController;
+import exception.InvalidMoveException;
 import models.*;
 import strategies.winningstrategy.ColumnWinningStrategy;
 import strategies.winningstrategy.DiagonalWinningStrategy;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Client {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidMoveException {
         System.out.println("GAME STARTS!");
         Scanner scanner = new Scanner(System.in);
 
@@ -41,8 +42,6 @@ public class Client {
                 winningStrategies
         );
 
-//        gameController.printBoard(game);
-
         while(gameController.gameState(game).equals(GameState.IN_PROGRESS)){
             //show board
             gameController.printBoard(game);
@@ -56,6 +55,14 @@ public class Client {
             gameController.makeMove(game);
             //make a move
         }
-        System.out.println("DEBUG");
+
+        gameController.printBoard(game);
+
+        if(gameController.gameState(game).equals(GameState.ENDED)){
+            System.out.println(gameController.getWinner(game).getName() + " has won the game.");
+        }else {
+            System.out.println("Game is a draw.");
+        }
+//        System.out.println("DEBUG");
     }
 }

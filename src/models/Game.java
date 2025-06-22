@@ -1,5 +1,6 @@
 package models;
 
+import exception.InvalidMoveException;
 import strategies.winningstrategy.WinningStrategy;
 
 import java.util.ArrayList;
@@ -91,9 +92,61 @@ public class Game {
         board.printBoard();
     }
 
-    public Move makeMove() {
-        return null;
+    private boolean validateMove(Move move) {
+        int row = move.getCell().getRow();
+        int col = move.getCell().getCol();
+
+        if(row < 0 || row >= board.getDimension() || col < 0 || col >= board.getDimension()) {
+            throw new RuntimeException("Invalid move: Cell out of bounds");
+        }
+
+        if(!board.getBoard().get(row).get(col).getCellState().equals(CellState.EMPTY)){
+            return false;
+        }
+
+        return true;
     }
+
+    public void makeMove() throws InvalidMoveException {
+        Player currentPlayer = players.get(nextMovePlayerIndex);
+
+        System.out.println("This is " + currentPlayer.getName() + "'s turn");
+        Move move = currentPlayer.makeMove(board);
+
+        if(!validateMove(move)){
+            throw new InvalidMoveException("Invalid move: Cell already occupied");
+        }
+
+        //valid move, apply move to board
+        Cell cell = board.getBoard().get(move.getCell().getRow()).get(move.getCell().getCol());
+        cell.setCellState(CellState.FILLED);
+        cell.setPlayer(currentPlayer);
+
+        Move newMove = new Move(currentPlayer, cell);
+        moves.add(newMove);
+
+        nextMovePlayerIndex = (nextMovePlayerIndex + 1) % players.size();
+
+        if (checkWinner(newMove)){
+            winner = currentPlayer;
+            gameState = GameState.ENDED;
+        }else if (moves.size() == board.getDimension() * board.getDimension()){
+            gameState = GameState.DRAW;
+        }
+
+    }
+
+
+
+    public boolean checkWinner(Move move){
+        for(WinningStrategy winningStrategy : winningStrategies){
+            if(winningStrategy.checkWinner(board, move)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public static class Builder{
         private int dimension;

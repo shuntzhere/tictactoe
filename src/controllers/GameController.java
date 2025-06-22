@@ -1,5 +1,6 @@
 package controllers;
 
+import exception.InvalidMoveException;
 import models.Game;
 import models.GameState;
 import models.Player;
@@ -15,8 +16,8 @@ public class GameController {
                  .build();
      }
 
-     public void makeMove(Game game) {
-
+     public void makeMove(Game game) throws InvalidMoveException {
+        game.makeMove();
      }
 
      public GameState gameState(Game game) {
